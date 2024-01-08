@@ -1,34 +1,14 @@
 import Button from "./Button";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import GaussJordan from "../services/GJ";
+import useInputs from "../customHooks/useInputs";
 
 const CardInputs = ({ filas, aumentar, disminuir, setResultados }) => {
   const [inputsInvalidos, setInputsInvalidos] = useState([]);
 
-  const inputs = useMemo(() => {
-    const elementosTotales = filas * (filas + 1);
-    const listaInputs = [];
+  const { inputs } = useInputs({ filas, inputsInvalidos });
 
-    for (let i = 0; i < elementosTotales; i++) {
-      const calculo = `X${Math.floor(i / (filas + 1)) + 1}_${
-        (i % (filas + 1)) + 1
-      }`;
-
-      const isInvalid = inputsInvalidos.includes(calculo);
-
-      const elemento = (
-        <input
-          key={i}
-          placeholder={calculo}
-          name={calculo}
-          className={isInvalid ? "bg-red-800" : ""}
-        />
-      );
-      listaInputs.push(elemento);
-    }
-
-    return listaInputs;
-  }, [filas, inputsInvalidos]);
+  console.log(inputs);
 
   const calcular = (e) => {
     e.preventDefault();
@@ -69,7 +49,18 @@ const CardInputs = ({ filas, aumentar, disminuir, setResultados }) => {
           gridTemplateRows: `repeat(${filas}, 1fr)`,
         }}
       >
-        {inputs}
+        {inputs &&
+          inputs.map((input) => {
+            return (
+              <input
+                type="number"
+                key={input.key}
+                placeholder={input.placeholder}
+                name={input.name}
+                className={input.className}
+              />
+            );
+          })}
       </div>
 
       <div className="flex flex-col gap-1 box-border w-full">
